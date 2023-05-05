@@ -12,6 +12,7 @@ const talents = require('./app/api/v1/talent/router')
 const events = require('./app/api/v1/events/router')
 const organizers = require('./app/api/v1/organizers/router')
 const authCMS = require('./app/api/v1/auth/router')
+const orders = require('./app/api/v1/orders/router')
 
 
 // midlewarr & error
@@ -36,6 +37,7 @@ app.use(v1, talents)
 app.use(v1, events)
 app.use(v1, organizers)
 app.use(v1, authCMS)
+app.use(v1, orders)
 
 
 app.use(notFoundMiddleware)

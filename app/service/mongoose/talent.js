@@ -92,12 +92,12 @@ const updateTalents = async (req) => {
 
 
   const result = await Talents.findOneAndUpdate(
-    { _id: id },
+    { _id: id, organizer: req.user.organizer },
     {
       name,
       image,
       role,
-      // organizer: req.user.organizer
+      organizer: req.user.organizer
     },
     { new: true, runValidators: true }
   );

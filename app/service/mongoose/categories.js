@@ -45,17 +45,21 @@ const updateCategories = async (req) => {
   const { name } = req.body;
   const { id } = req.params;
 
+
     const check = await categories.findOne({
       name,
       _id: { $ne: id },
       organizer: req.user.organizer,
-  });
+    });
 
-  if (check) throw new BadRequestError(`kategori nama duplikat 123`);
+  if (check) throw new BadRequestError(`kategori nama duplikat`);
 
   const result = await categories.findByIdAndUpdate(
     id,
-    { name },
+    {
+      name,
+      organizer: req.user.organizer
+    },
     {
       new: true,
       runValidators: true,

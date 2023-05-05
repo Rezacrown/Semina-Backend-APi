@@ -11,6 +11,7 @@ const orderDetailSchema = new mongoose.Schema({
       default: 0,
     },
   },
+
   sumTicket: {
     type: Number,
     required: true,
@@ -42,7 +43,7 @@ const orderSchema = new mongoose.Schema(
       },
       role: {
         type: String,
-        default: "Designer",
+        default: "-",
       },
     },
     status: {
