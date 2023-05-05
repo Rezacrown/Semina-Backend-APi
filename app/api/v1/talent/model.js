@@ -22,11 +22,11 @@ const talentScema = new Schema(
       ref: "Image",
       required: true,
     },
-    // organizer: {
-    //   type: mongoose.Types.ObjectId,
-    //   // ref: "Organizer",
-    //   required: true,
-    // },
+    organizer: {
+      type: mongoose.Types.ObjectId,
+      ref: "Organizer",
+      required: true,
+    },
   },
   {
     timestamps: true,

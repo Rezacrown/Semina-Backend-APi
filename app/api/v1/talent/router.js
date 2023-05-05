@@ -8,10 +8,15 @@ const {
     destroy,
 } = require("./controller");
 
-router.post("/talent", create);
-router.get("/talent", index);
-router.get("/talent/:id", find);
-router.put("/talent/:id", update);
-router.delete("/talent/:id", destroy);
+const {
+  authenticateUser,
+  authorizeRoles,
+} = require("../../../middleware/auth");
+
+router.post("/talent", authenticateUser, authorizeRoles('organizer'), create);
+router.get("/talent", authenticateUser, authorizeRoles('organizer'), index);
+router.get("/talent/:id", authenticateUser, authorizeRoles('organizer'), find);
+router.put("/talent/:id", authenticateUser, authorizeRoles('organizer'), update);
+router.delete("/talent/:id", authenticateUser, authorizeRoles('organizer'), destroy);
 
 module.exports = router;

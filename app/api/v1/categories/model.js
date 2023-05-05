@@ -10,11 +10,11 @@ const categoryScema = new Schema({
     maxLength: [20, "Panjang nama kategori maksimal 20 karakter"],
     required: [true, "Nama kategori harus diisi"],
   },
-  // organizer: {
-  //   type: mongoose.Types.ObjectId,
-  //   // ref: "Organizer",
-  //   required: true,
-  // },
+  organizer: {
+    type: mongoose.Types.ObjectId,
+    ref: "Organizer",
+    required: true,
+  },
 },
     {
         timestamps: true

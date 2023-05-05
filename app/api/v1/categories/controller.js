@@ -14,13 +14,12 @@ const { json } = require("express");
 
 const createCategory = async (req, res, next) => {
   try {
-    const { name } = req.body;
-
-    const check = await modelCategories.findOne({ name });
-    if (check) throw new BadRequestError("category name duplicated");
-
     const create = await createOneCategory(req);
-    res.send(StatusCodes.CREATED, "succes created");
+
+    res.send(StatusCodes.CREATED, {
+      msg: "succes created",
+      data: create
+    });
   } catch (error) {
     next(error);
   }
@@ -28,7 +27,8 @@ const createCategory = async (req, res, next) => {
 
 const findAllCategories = async (req, res, next) => {
   try {
-    const result = await getAllCategories();
+    const result = await getAllCategories(req);
+    
     res.send(StatusCodes.OK, {data: result});
   } catch (error) {
     next(error);

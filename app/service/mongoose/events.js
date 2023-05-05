@@ -27,7 +27,7 @@ const createEvents = async (req) => {
   // cari Events dengan field name
   const check = await Events.findOne({
     title,
-    // organizer: req.user.organizer
+    organizer: req.user.organizer
   });
 
   // apa bila check true / data Events sudah ada maka kita tampilkan error bad request dengan message pembicara duplikat
@@ -45,7 +45,7 @@ const createEvents = async (req) => {
     image,
     category,
     talent,
-    // organizer: req.user.organizer,
+    organizer: req.user.organizer,
   });
 
   return result;
@@ -54,7 +54,7 @@ const createEvents = async (req) => {
 const getAllEvents = async (req) => {
   const { keyword, category, talent } = req.query;
   let condition = {
-    // organizer: req.user.organizer
+    organizer: req.user.organizer
   };
 
   if (keyword) {
@@ -69,8 +69,8 @@ const getAllEvents = async (req) => {
     condition = { ...condition, talent: talent };
   }
 
-  console.log("condition >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-  console.log(condition);
+  // console.log("condition >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+  // console.log(condition);
 
   const result = await Events.find(condition)
     .populate({
@@ -95,7 +95,7 @@ const getOneEvents = async (req) => {
 
   const result = await Events.findOne({
     _id: id,
-    // organizer: req.user.organizer,
+    organizer: req.user.organizer,
   })
     .populate({ path: "image", select: "_id name" })
     .populate({
@@ -145,7 +145,7 @@ const updateEvents = async (req) => {
   const check = await Events.findOne({
     _id: { $ne: id },
     title,
-    // organizer: req.user.organizer,
+    organizer: req.user.organizer,
   });
 
   // apa bila check true / data Events sudah ada maka kita tampilkan error bad request dengan message pembicara duplikat
@@ -181,7 +181,7 @@ const deleteEvents = async (req) => {
 
   const result = await Events.findOne({
     _id: id,
-    // organizer: req.user.organizer,
+    organizer: req.user.organizer,
   });
 
   if (!result) throw new NotFoundError(`Tidak ada acara dengan id :  ${id}`);
