@@ -13,13 +13,14 @@ const events = require('./app/api/v1/events/router')
 const organizers = require('./app/api/v1/organizers/router')
 const authCMS = require('./app/api/v1/auth/router')
 const orders = require('./app/api/v1/orders/router')
+const participants = require('./app/api/v1/participants/router')
 
 
 // midlewarr & error
 const notFoundMiddleware = require("./app/middleware/not-found");
 const handleErrorMiddleware = require("./app/middleware/handler-error");
 
-const v1 = '/api/v1/cms'
+const v1CMS = '/api/v1/cms'
 
 
 const app = express();
@@ -31,13 +32,14 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-app.use(v1, categories)
-app.use(v1, image)
-app.use(v1, talents)
-app.use(v1, events)
-app.use(v1, organizers)
-app.use(v1, authCMS)
-app.use(v1, orders)
+app.use(v1CMS, categories)
+app.use(v1CMS, image)
+app.use(v1CMS, talents)
+app.use(v1CMS, events)
+app.use(v1CMS, organizers)
+app.use(v1CMS, authCMS)
+app.use(v1CMS, orders)
+app.use(`/api/v1`, participants)
 
 
 app.use(notFoundMiddleware)

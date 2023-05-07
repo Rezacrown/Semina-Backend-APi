@@ -20,7 +20,10 @@ const createJWT = ({ payload }) => {
 //   return token;
 // };
 
-const isTokenValid = ({ token }) => jwt.verify(token, jwtSecret);
+const isTokenValid = ({ token }) => {
+  const result = jwt.verify(token, jwtSecret);
+  return result
+}
 
 // const isTokenValidRefreshToken = ({ token }) =>
 //   jwt.verify(token, jwtRefreshTokenSecret);
