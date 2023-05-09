@@ -1,10 +1,11 @@
 const Events = require("../../api/v1/events/model");
 const Orders = require("../../api/v1/orders/model");
+const Payments = require("../../api/v1/payments/model");
 const { NotFoundError } = require("../../errors");
 const Participant = require("../../api/v1/participants/model");
 const { BadRequestError, UnauthorizedError } = require("../../errors");
 const { createJWT, createTokenParticipant } = require("../../utils");
-const { otpMail } = require("../mail");
+const { otpMail, orderMail } = require("../mail");
 
 const getAllEvents = async (req) => {
   const result = await Events.find({ statusEvent: "Published" })
@@ -17,7 +18,7 @@ const getAllEvents = async (req) => {
 
 const getOneEvent = async (req) => {
   const { id } = req.params;
-  const result = await Events.findOne({ _id: id, statusEvent: 'Published' })
+  const result = await Events.findOne({ _id: id, statusEvent: "Published" })
     .populate("category")
     .populate({ path: "talent", populate: "image" })
     .populate("image");
@@ -115,9 +116,109 @@ const activateParticipant = async (req) => {
 };
 
 
+
+
+// order participants
 const getAllOrders = async (req) => {
   console.log(req.participant);
   const result = await Orders.find({ participant: req.participant.id });
+  return result;
+};
+
+/**
+ * Tugas Send email invoice
+ * TODO: Ambil data email dari personal detail
+ *  */
+const checkoutOrder = async (req) => {
+  const { event, personalDetail, payment, tickets } = req.body;
+  const { firstName, lastName, email } = personalDetail
+  
+  console.log(personalDetail)
+
+  if(!firstName || !lastName || !email) {
+      throw new BadRequestError("please don't empty PersonalDetail Information");
+   }
+
+  const checkingEvent = await Events.findOne({ _id: event });
+  if (!checkingEvent) {
+    throw new NotFoundError("Tidak ada acara dengan id : " + event);
+  }
+
+  const checkingPayment = await Payments.findOne({ _id: payment });
+
+  if (!checkingPayment) {
+    throw new NotFoundError(
+      "Tidak ada metode pembayaran dengan id :" + payment
+    );
+  }
+
+  // looping validation karena tickets adalah berupa array
+  let totalPay = 0;
+  let totalOrderTicket = 0;
+
+  await tickets.forEach((tic) => {
+    checkingEvent.tickets.forEach((ticket) => {
+      if (tic.ticketCategories.type === ticket.type) {
+        if (tic.sumTicket > ticket.stock) {
+          throw new NotFoundError("Stock ticket event tidak mencukupi");
+        } else {
+          ticket.stock = ticket.stock - tic.sumTicket;
+          totalOrderTicket = totalOrderTicket + tic.sumTicket;
+          totalPay = totalPay + tic.ticketCategories.price * tic.sumTicket;
+        }
+      }
+    });
+  });
+
+  // save perubahan set dari loop ke db
+  await checkingEvent.save();
+
+  // set history event dari data yang baru diupdate tadi
+  const historyEvent = {
+    title: checkingEvent.title,
+    date: checkingEvent.date,
+    about: checkingEvent.about,
+    tagline: checkingEvent.tagline,
+    keyPoint: checkingEvent.keyPoint,
+    venueName: checkingEvent.venueName,
+    tickets: tickets,
+    image: checkingEvent.image,
+    category: checkingEvent.category,
+    talent: checkingEvent.talent,
+    organizer: checkingEvent.organizer,
+  };
+
+  // buat result dari instance Model Order
+  const result = new Orders({
+    date: new Date(),
+    personalDetail: {
+      firstName,
+      lastName,
+      email,
+    },
+    totalPay,
+    totalOrderTicket,
+    orderItems: tickets,
+    participant: req.participant.id,
+    event,
+    historyEvent,
+    payment,
+  });
+
+  // save ke Order field di db
+  await result.save();
+
+  // send email notification
+  await orderMail(email, result)
+
+  return result;
+};
+
+const getAllPaymentByOrganizer = async (req) => {
+  const { organizer } = req.params;
+
+  const result = await Payments.find({ organizer: organizer });
+
   return result;
 };
 
@@ -127,5 +228,7 @@ module.exports = {
   signinParticipant,
   signupParticipant,
   activateParticipant,
-  getAllOrders
+  getAllOrders,
+  checkoutOrder,
+  getAllPaymentByOrganizer
 };

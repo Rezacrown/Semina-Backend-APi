@@ -14,6 +14,7 @@ const organizers = require('./app/api/v1/organizers/router')
 const authCMS = require('./app/api/v1/auth/router')
 const orders = require('./app/api/v1/orders/router')
 const participants = require('./app/api/v1/participants/router')
+const payments = require('./app/api/v1/payments/router')
 
 
 // midlewarr & error
@@ -39,6 +40,7 @@ app.use(v1CMS, events)
 app.use(v1CMS, organizers)
 app.use(v1CMS, authCMS)
 app.use(v1CMS, orders)
+app.use(v1CMS, payments)
 app.use(`/api/v1`, participants)
 
 

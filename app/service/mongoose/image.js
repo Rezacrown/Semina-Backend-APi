@@ -22,9 +22,7 @@ const createImage = async (req) => {
 // fungsi chekcking image
 const checkImage = async (id) => {
     const result = await image.findOne({ _id: id })
-    
-    // console.log(result);
-
+      
     if(!result) throw new NotFoundError(`Tidak ditemukan Gambar dengan id: ${id}`)
     
     return result;
