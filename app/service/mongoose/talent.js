@@ -8,6 +8,8 @@ const { NotFoundError, BadRequestError } = require("../../errors");
 const getAllTalents = async (req) => {
   const { keyword } = req.query;
 
+  // console.log(req.query)
+
   let condition = {organizer: req.user.organizer};
 
   if (keyword) {
@@ -29,6 +31,8 @@ const getAllTalents = async (req) => {
 const createTalents = async (req) => {
   const { name, role, image } = req.body;
 
+  if(!image) throw new BadRequestError('mohon masukan Gambar')
+  console.log(image)
   // cari image dengan field image
   await checkImage(image);
 
@@ -41,7 +45,7 @@ const createTalents = async (req) => {
   const result = await Talents.create({
     name,
     image,
-    role,
+    role: role || '-',
     organizer: req.user.organizer,
   });
 

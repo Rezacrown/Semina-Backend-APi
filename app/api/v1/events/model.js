@@ -16,7 +16,7 @@ const ticketCategoriesSchema = new mongoose.Schema({
   statusTicketCategories: {
     type: Boolean,
     enum: [true, false],
-    default: true,
+    default: false,
   },
   expired: {
     type: Date,

@@ -46,6 +46,7 @@ const createEvents = async (req) => {
     category,
     talent,
     organizer: req.user.organizer,
+    statusTicketCategories,
   });
 
   return result;
@@ -136,6 +137,8 @@ const updateEvents = async (req) => {
     talent,
   } = req.body;
 
+  // console.log('image >>>>>', image)
+
   // cari image, category dan talent dengan field id
   await checkImage(image);
   await checkCategories(category);
@@ -175,6 +178,7 @@ const updateEvents = async (req) => {
       image,
       category,
       talent,
+      statusTicketCategories,
       organizer: req.user.organizer,
     },
     { new: true, runValidators: true }

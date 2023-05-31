@@ -21,11 +21,12 @@ const createImage = async (req) => {
 
 // fungsi chekcking image
 const checkImage = async (id) => {
-    const result = await image.findOne({ _id: id })
-      
-    if(!result) throw new NotFoundError(`Tidak ditemukan Gambar dengan id: ${id}`)
-    
-    return result;
-}
+  const result = await image.findOne({ _id: id });
+
+  if (!result)
+    throw new NotFoundError(`Tidak ditemukan Gambar dengan id: ${id}`);
+
+  return result;
+};
 
 module.exports = { createImage, checkImage };

@@ -5,7 +5,7 @@ const errorHandlerMiddleware = (err, req, res, next) => {
     // console.log("log midleware error ya bro");
     // console.log(err.message);
     // console.log('err >>>>>>>>>>>>');
-    // console.log(err);
+    console.log(err);
     
   let customError = {
     // set default
