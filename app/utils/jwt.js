@@ -6,7 +6,6 @@ const {
   jwtRefreshTokenSecret,
 } = require("../config");
 
-
 // token
 const createJWT = ({ payload }) => {
   const token = jwt.sign(payload, jwtSecret, {
@@ -19,7 +18,6 @@ const isTokenValid = ({ token }) => {
   return result;
 };
 
-
 // refresh token
 const createRefreshJWT = ({ payload }) => {
   const token = jwt.sign(payload, jwtRefreshTokenSecret, {
@@ -28,7 +26,9 @@ const createRefreshJWT = ({ payload }) => {
   return token;
 };
 
-const isTokenValidRefreshToken = ({ token }) => jwt.verify(token, jwtRefreshTokenSecret);
+const isTokenValidRefreshToken = ({ token }) => {
+  return jwt.verify(token, jwtRefreshTokenSecret);
+};
 
 module.exports = {
   createJWT,

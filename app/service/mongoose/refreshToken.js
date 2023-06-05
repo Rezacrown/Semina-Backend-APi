@@ -16,14 +16,18 @@ const createUserRefreshToken = async (payload) => {
 const getUserRefreshToken = async (req) => {
   // ambil refresh token dan email dari front end lewat params
   const { refreshToken, email } = req.params;
+  
+ 
 
-    if(!refreshToken) throw new NotFoundError('refresh token not found');
+  // untuk cek apakah refresh token ada, jika da maka kita bisa lakukan request untuk buat token baru
+  if (!refreshToken) throw new NotFoundError('refresh token not found');
+  
   // cek apakah refresh token ada di db
   const result = await UserRefreshToken.findOne({
     refreshToken,
   });
 
-  if (email !== result.email) throw new BadRequestError("email tidak valid");
+  // if (email !== result.email) throw new BadRequestError("email tidak valid");
 
   if (!result) throw new NotFoundError(`refreshToken tidak valid `);
 

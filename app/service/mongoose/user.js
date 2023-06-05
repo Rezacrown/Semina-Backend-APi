@@ -3,6 +3,7 @@ const Organizers = require("../../api/v1/organizers/model");
 
 const { BadRequestError } = require("../../errors");
 
+// organizer
 const createOrganizer = async (req) => {
   const { organizer, role, email, password, confirmPassword, name } = req.body;
 
@@ -30,12 +31,16 @@ const createOrganizer = async (req) => {
   return users;
 };
 
+
+// admin
 const createUsers = async (req, res) => {
   const { name, password, role, confirmPassword, email } = req.body;
 
   if (password !== confirmPassword) {
     throw new BadRequestError("Password dan Konfirmasi password tidak cocok");
   }
+  // console.log('req.user')
+  // console.log(req.user)
 
   const result = await Users.create({
     name,
@@ -48,11 +53,23 @@ const createUsers = async (req, res) => {
   return result;
 };
 
+// owner dan organizer
 const getAllUsers = async (req) => {
+  const { email, role, organizer, id } = req.user;
 
-  const {} = req.body
+  let condition = {};
 
-  const result = await Users.find();
+  if (role !== 'owner') {
+    condition = {
+      organizer: organizer,
+      role: 'admin'
+      // email: {
+      //   $ne: email
+      // }
+    }
+  }
+
+  const result = await Users.find(condition);
 
   result.map((user, index) => {
     delete user._doc.password;
@@ -64,7 +81,7 @@ const getAllUsers = async (req) => {
 };
 
 // const getAdmin = async (req) => {
-
+//     const {} = req.body
 // }
 
 module.exports = { createOrganizer, createUsers, getAllUsers };

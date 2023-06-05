@@ -8,8 +8,13 @@ const authenticateUser = async (req, res, next) => {
     // check header
     const authHeader = req.headers.authorization;
 
+    // console.log('authHeader');
+    // console.log(req.headers);
+
     if (authHeader && authHeader.startsWith("Bearer")) {
       token = authHeader.split(" ")[1];
+    } else {
+      throw new UnauthenticatedError("Invalid authorization header Bearer")
     }
 
     if (!token) {

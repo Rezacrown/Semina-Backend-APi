@@ -40,7 +40,7 @@ app.use(v1CMS, organizers);
 app.use(v1CMS, orders);
 app.use(v1CMS, payments);
 app.use(v1CMS, authCMS);
-app.use(v1CMS, authCMS);
+// app.use(v1CMS, authCMS);
 app.use(v1CMS, refreshToken);
 app.use(`/api/v1`, participants);
 

@@ -60,13 +60,19 @@ const signupParticipant = async (req) => {
   const { firstName, lastName, email, password, role } = req.body;
   // participant new -> create data baru dengan status  tidak aktif
   //
+
+
   // jika email dan status tidak aktif
   let result = await Participant.findOne({
     email,
-    status: "tidak aktif",
+    // status: "tidak aktif",
   });
 
-  if (result) {
+  if (result.status !== "tidak aktif") {
+    throw new BadRequestError('invalid credentials');
+}
+
+  if (result.status === "tidak aktif") {
     result.firstName = firstName;
     result.lastName = lastName;
     result.role = role;
@@ -120,7 +126,7 @@ const activateParticipant = async (req) => {
 
 // order participants
 const getAllOrders = async (req) => {
-  console.log(req.participant);
+  // console.log(req.participant);
   const result = await Orders.find({ participant: req.participant.id });
   return result;
 };

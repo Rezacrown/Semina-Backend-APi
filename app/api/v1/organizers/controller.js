@@ -41,8 +41,14 @@ const createCMSUser = async (req, res, next) => {
     next(err);
   }
 };
+
+// const getAdmin = async (req, res, next) => {
+
+//  }
+
 module.exports = {
   createCMSOrganizer,
   getCMSUsers,
   createCMSUser,
+  // getAdmin
 };

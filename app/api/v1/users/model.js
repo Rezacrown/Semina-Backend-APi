@@ -23,7 +23,9 @@ const userSchema = new Schema(
     role: {
       type: String,
       enum: ["admin", "organizer", "owner"],
-      default: "admin",
+      required: [true, "Role harus diisi"],
+      // default: "admin",
+
     },
     organizer: {
       type: mongoose.Types.ObjectId,

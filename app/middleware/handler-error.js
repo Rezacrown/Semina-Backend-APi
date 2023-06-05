@@ -1,26 +1,23 @@
 const { StatusCodes } = require("http-status-codes");
 
 const errorHandlerMiddleware = (err, req, res, next) => {
- 
-    // console.log("log midleware error ya bro");
-    // console.log(err.message);
-    // console.log('err >>>>>>>>>>>>');
-    console.log(err);
-    
+  // console.log("log midleware error ya bro");
+  // console.log(err.message);
+  // console.log('err >>>>>>>>>>>>');
+  // console.log(err);
+
+  // set default
   let customError = {
-    // set default
     statusCode: err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
     msg: err.message || "Something went wrong try again later",
-    };
-    
+  };
 
   // error validation dari mongoose
   if (err.name === "ValidationError") {
-
     customError.msg = Object.values(err.errors)
       .map((item) => item.message)
       .join(", ");
-    
+
     customError.statusCode = 400;
   }
 
@@ -33,8 +30,7 @@ const errorHandlerMiddleware = (err, req, res, next) => {
   if (err.name === "CastError") {
     customError.msg = `No item found with id : ${err.value}`;
     customError.statusCode = 404;
-    }
-    
+  }
 
   return res.status(customError.statusCode).json({ msg: customError.msg });
 };

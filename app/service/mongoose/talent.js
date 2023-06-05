@@ -32,7 +32,8 @@ const createTalents = async (req) => {
   const { name, role, image } = req.body;
 
   if(!image) throw new BadRequestError('mohon masukan Gambar')
-  console.log(image)
+
+
   // cari image dengan field image
   await checkImage(image);
 
