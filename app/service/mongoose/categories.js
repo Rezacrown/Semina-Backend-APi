@@ -3,7 +3,11 @@ const categories = require("../../api/v1/categories/model");
 const { NotFoundError, BadRequestError } = require("../../errors");
 
 const getAllCategories = async (req) => {
-  let condition = { organizer: req.user.organizer };
+  let condition = {};
+
+  if (req.user.role !== "owner") {
+    condition = { organizer: req.user.organizer };
+  }
 
   const result = await categories.find(condition);
 
@@ -33,10 +37,16 @@ const createOneCategory = async (req) => {
 
 const getOneCategory = async (req) => {
   const { id } = req.params;
-  const result = await categories.findOne({
+
+  let condition = {
     _id: id,
-    organizer: req.user.organizer,
-  });
+  };
+
+  if (req.user.role !== "owner") {
+    condition = { ...condition, organizer: req.user.organizer };
+  }
+
+  const result = await categories.findOne(condition);
 
   if (!result) throw new NotFoundError(`Tidak ada Kategori dengan id: ${id}`);
 

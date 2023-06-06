@@ -17,6 +17,7 @@ const createEvents = async (req) => {
     image,
     category,
     talent,
+    statusTicketCategories,
   } = req.body;
 
   // cari image, category dan talent dengan field id
@@ -135,6 +136,7 @@ const updateEvents = async (req) => {
     image,
     category,
     talent,
+    statusTicketCategories,
   } = req.body;
 
   // console.log('image >>>>>', image)

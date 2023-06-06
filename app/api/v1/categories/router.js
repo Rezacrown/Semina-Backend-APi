@@ -17,7 +17,7 @@ const {
 router.get(
   "/categories",
   authenticateUser,
-  authorizeRoles("organizer"),
+  authorizeRoles("organizer", "owner"),
   findAllCategories
 );
 router.post(
@@ -26,7 +26,7 @@ router.post(
   authorizeRoles("organizer"),
   createCategory
 );
-router.get("/categories/:id", authenticateUser, authorizeRoles('organizer'), findOneCategory);
+router.get("/categories/:id", authenticateUser, authorizeRoles('organizer', 'owner'), findOneCategory);
 router.put(
   "/categories/:id",
   authenticateUser,
