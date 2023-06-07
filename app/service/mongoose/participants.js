@@ -82,6 +82,8 @@ const signupParticipant = async (req) => {
     result.password = password;
     result.otp = Math.floor(Math.random() * 9999);
     await result.save();
+
+    await otpMail(email, result);
   }
 
   // create user participant jika tidak  ada
@@ -94,9 +96,10 @@ const signupParticipant = async (req) => {
       role,
       otp: Math.floor(Math.random() * 9999),
     });
+    await otpMail(email, result);
   }
 
-  await otpMail(email, result);
+  
 
   delete result._doc.password;
   delete result._doc.otp;
@@ -106,6 +109,9 @@ const signupParticipant = async (req) => {
 
 const activateParticipant = async (req) => {
   const { otp, email } = req.body;
+
+  if(!email) throw BadRequestError('Please enter an email address')
+
   const check = await Participant.findOne({
     email,
   });
