@@ -110,8 +110,6 @@ const signupParticipant = async (req) => {
 const activateParticipant = async (req) => {
   const { otp, email } = req.body;
 
-  if(!email) throw BadRequestError('Please enter an email address')
-
   const check = await Participant.findOne({
     email,
   });
