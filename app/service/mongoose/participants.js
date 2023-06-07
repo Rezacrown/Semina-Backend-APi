@@ -7,6 +7,8 @@ const { BadRequestError, UnauthorizedError } = require("../../errors");
 const { createJWT, createTokenParticipant } = require("../../utils");
 const { otpMail, orderMail } = require("../mail");
 
+const moment = require("moment");
+
 const getAllEvents = async (req) => {
   const result = await Events.find({ statusEvent: "Published" })
     .populate("category")
@@ -140,7 +142,7 @@ const checkoutOrder = async (req) => {
   const { event, personalDetail, payment, tickets } = req.body;
   const { firstName, lastName, email } = personalDetail;
 
-  console.log(personalDetail);
+  // console.log(personalDetail);
 
   if (!firstName || !lastName || !email) {
     throw new BadRequestError("please don't empty PersonalDetail Information");
@@ -170,7 +172,7 @@ const checkoutOrder = async (req) => {
           throw new NotFoundError("Stock ticket event tidak mencukupi");
         } else {
           ticket.stock = ticket.stock - tic.sumTicket;
-          totalOrderTicket += tic.sumTicket;
+          totalOrderTicket = totalOrderTicket + tic.sumTicket;
           totalPay = totalPay + tic.ticketCategories.price * tic.sumTicket;
         }
       }
@@ -197,7 +199,7 @@ const checkoutOrder = async (req) => {
 
   // buat result dari instance Model Order
   const result = new Orders({
-    date: new Date(),
+    date: moment(new Date()).format("MMMM Do YYYY, h:mm:ss"),
     personalDetail: {
       firstName,
       lastName,
