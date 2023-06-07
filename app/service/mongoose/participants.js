@@ -64,14 +64,15 @@ const signupParticipant = async (req) => {
   // jika email dan status tidak aktif
   let result = await Participant.findOne({
     email,
-    status: "tidak aktif",
+    // status: "tidak aktif",
   });
 
-  if (result.status !== "tidak aktif") {
+  // check status partcipant
+  if (result && result.status !== "tidak aktif") {
     throw new BadRequestError("invalid credentials");
   }
 
-  if (result.status === "tidak aktif") {
+  if (result && result.status === "tidak aktif") {
     result.firstName = firstName;
     result.lastName = lastName;
     result.role = role;
@@ -79,7 +80,10 @@ const signupParticipant = async (req) => {
     result.password = password;
     result.otp = Math.floor(Math.random() * 9999);
     await result.save();
-  } else {
+  }
+
+  // create user participant jika tidak  ada
+  if (!result) {
     result = await Participant.create({
       firstName,
       lastName,
@@ -89,6 +93,7 @@ const signupParticipant = async (req) => {
       otp: Math.floor(Math.random() * 9999),
     });
   }
+
   await otpMail(email, result);
 
   delete result._doc.password;
