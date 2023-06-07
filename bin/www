@@ -11,11 +11,6 @@ const https = require('https');
 
 const db = require('../app/db')
 
-const dotenv = require('dotenv');
-dotenv.config()
-
-
-
 /**
  * Get port from environment and store in Express.
  */
@@ -29,16 +24,23 @@ app.set('port', port);
 
 const server = http.createServer(app);
 
-db.on('error', (err) => {
-    console.log(`database mongodb terjadi masalah di: 
-    ${err}`)
+db.on('error', function (err) {
+    console.log('connection error: tidak bisa tersambung ke mongodb');
 })
 
-db.on('open', () => {
-    server.listen(port)
-    server.on('error', onError)
-    server.on('listening', onListening)
-})
+// db.on('open', () => {
+//     server.listen(port)
+//     server.on('error', onError)
+//     server.on('listening', onListening)
+// })
+
+db.on('open', function () {
+  server.listen(port, () => {
+    console.log('server run port :' + port);
+  });
+  server.on('error', onError);
+  server.on('listening', onListening);
+});
 
 
 /**
