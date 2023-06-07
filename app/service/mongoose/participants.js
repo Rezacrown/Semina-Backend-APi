@@ -61,16 +61,15 @@ const signupParticipant = async (req) => {
   // participant new -> create data baru dengan status  tidak aktif
   //
 
-
   // jika email dan status tidak aktif
   let result = await Participant.findOne({
     email,
-    // status: "tidak aktif",
+    status: "tidak aktif",
   });
 
   if (result.status !== "tidak aktif") {
-    throw new BadRequestError('invalid credentials');
-}
+    throw new BadRequestError("invalid credentials");
+  }
 
   if (result.status === "tidak aktif") {
     result.firstName = firstName;
@@ -121,9 +120,6 @@ const activateParticipant = async (req) => {
   return result;
 };
 
-
-
-
 // order participants
 const getAllOrders = async (req) => {
   // console.log(req.participant);
@@ -137,13 +133,13 @@ const getAllOrders = async (req) => {
  *  */
 const checkoutOrder = async (req) => {
   const { event, personalDetail, payment, tickets } = req.body;
-  const { firstName, lastName, email } = personalDetail
-  
-  console.log(personalDetail)
+  const { firstName, lastName, email } = personalDetail;
 
-  if(!firstName || !lastName || !email) {
-      throw new BadRequestError("please don't empty PersonalDetail Information");
-   }
+  console.log(personalDetail);
+
+  if (!firstName || !lastName || !email) {
+    throw new BadRequestError("please don't empty PersonalDetail Information");
+  }
 
   const checkingEvent = await Events.findOne({ _id: event });
   if (!checkingEvent) {
@@ -215,7 +211,7 @@ const checkoutOrder = async (req) => {
   await result.save();
 
   // send email notification
-  await orderMail(email, result)
+  await orderMail(email, result);
 
   return result;
 };
@@ -236,5 +232,5 @@ module.exports = {
   activateParticipant,
   getAllOrders,
   checkoutOrder,
-  getAllPaymentByOrganizer
+  getAllPaymentByOrganizer,
 };
