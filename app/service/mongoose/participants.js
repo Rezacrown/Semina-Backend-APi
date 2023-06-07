@@ -71,7 +71,7 @@ const signupParticipant = async (req) => {
 
   // check status partcipant
   if (result && result.status !== "tidak aktif") {
-    throw new BadRequestError("invalid credentials");
+    throw new BadRequestError("invalid Email");
   }
 
   if (result && result.status === "tidak aktif") {
