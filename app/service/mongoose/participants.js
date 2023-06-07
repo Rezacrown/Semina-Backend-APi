@@ -199,7 +199,7 @@ const checkoutOrder = async (req) => {
 
   // buat result dari instance Model Order
   const result = new Orders({
-    date: moment(new Date()).format("MMMM Do YYYY, h:mm:ss"),
+    date: moment(new Date().getTime()).format("MMMM Do YYYY"),
     personalDetail: {
       firstName,
       lastName,
