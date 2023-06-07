@@ -170,7 +170,7 @@ const checkoutOrder = async (req) => {
           throw new NotFoundError("Stock ticket event tidak mencukupi");
         } else {
           ticket.stock = ticket.stock - tic.sumTicket;
-          totalOrderTicket = totalOrderTicket + tic.sumTicket;
+          totalOrderTicket += tic.sumTicket;
           totalPay = totalPay + tic.ticketCategories.price * tic.sumTicket;
         }
       }
@@ -204,7 +204,7 @@ const checkoutOrder = async (req) => {
       email,
     },
     totalPay,
-    totalOrderTicket,
+    totalOrderTicket: totalOrderTicket || 1,
     orderItems: tickets,
     participant: req.participant.id,
     event,
