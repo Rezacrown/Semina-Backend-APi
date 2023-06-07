@@ -7,6 +7,7 @@
 const app = require('../app');
 const debug = require('debug')('semina-backend:server');
 const http = require('http');
+const https = require('https');
 
 const db = require('../app/db')
 
