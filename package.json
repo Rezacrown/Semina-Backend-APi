@@ -1,7 +1,7 @@
 {
     "name": "semina-backend",
     "version": "0.0.0",
-    "private": true,
+    "author": "RIZKY REZA",
     "scripts": {
         "start": "node ./bin/www",
         "dev": "nodemon ./bin/www"
