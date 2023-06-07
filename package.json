@@ -1,6 +1,6 @@
 {
     "name": "semina-backend",
-    "version": "0.0.0",
+    "version": "18.16.0",
     "author": "RIZKY REZA",
     "scripts": {
         "start": "node ./bin/www",
