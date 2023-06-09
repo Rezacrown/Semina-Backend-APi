@@ -19,7 +19,24 @@ const otpMail = async (email, data) => {
     let template = fs.readFileSync("app/views/email/otp.html", "utf8");
 
     let message = {
-      from: "Semina Admin <yekk@example.com>",
+      from: "Semina Admin <no-reply@myapp.com>",
+      to: email,
+      subject: "Otp Code for Registration: ",
+      html: Mustache.render(template, data),
+    };
+
+    return await transporter.sendMail(message);
+  } catch (ex) {
+    console.log(ex);
+  }
+};
+
+const otpForgetPassword = async (email, data) => {
+  try {
+    let template = fs.readFileSync("app/views/email/forgetPassword.html", "utf8");
+
+    let message = {
+      from: "Semina Admin <no-reply@myapp.com>",
       to: email,
       subject: "Otp Code for Registration: ",
       html: Mustache.render(template, data),
@@ -36,7 +53,7 @@ const orderMail = async (email, data) => {
     let template = fs.readFileSync("app/views/email/order.html", "utf8");
 
     let message = {
-      from: "Semina Admin <yekk@example.com>",
+      from: "Semina Admin <no-reply@myapp.com>",
       to: email,
       subject: "Order Detail: ",
       html: Mustache.render(template, data),

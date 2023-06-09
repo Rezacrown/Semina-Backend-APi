@@ -267,7 +267,6 @@ const forgotPassword = async (req) => {
 const setNewPassword = async (req) => {
   const { otp, email, id, password, confirmPassword } = req.body;
 
-  console.log({otp, email, id, password, confirmPassword})
 
   if (!otp || !email || !password || !confirmPassword)
     throw new BadRequestError("please provided Input");
