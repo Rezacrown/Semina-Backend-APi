@@ -6,7 +6,10 @@ const {
   activateParticipant,
   getAllOrders,
   checkoutOrder,
-  getAllPaymentByOrganizer
+  getAllPaymentByOrganizer,
+  forgotPassword,
+  setNewPassword,
+  checkOtp,
 } = require("../../../service/mongoose/participants");
 
 const { StatusCodes } = require("http-status-codes");
@@ -73,6 +76,43 @@ const signin = async (req, res, next) => {
   }
 };
 
+const lupaPassword = async (req, res, next) => {
+  try {
+    const result = await forgotPassword(req)
+
+    res.status(StatusCodes.ACCEPTED).json({
+      data: result
+    })
+  } catch (error) {
+    next(error);
+  }
+}
+
+const confirmLupaPassword = async (req, res, next) => {
+  try {
+    const result = await setNewPassword(req)
+
+    res.status(StatusCodes.ACCEPTED).json({
+      // data: result,
+      status: 'confirmed change password'
+    })
+  } catch (error) {
+    next(error);
+  }
+}
+
+const checkingOtp = async (req, res, next) => {
+  try {
+    const token = await checkOtp(req)
+
+    res.status(StatusCodes.ACCEPTED).json({
+      data: token
+    })
+  } catch (error) {
+    next(error);
+  }
+}
+
 
 // payment order
 const getDashboard = async (req, res, next) => {
@@ -121,5 +161,8 @@ module.exports = {
   activeParticipant,
   getDashboard,
   getAllPayment,
-  checkout
+  checkout,
+  lupaPassword,
+  confirmLupaPassword,
+  checkingOtp
 };

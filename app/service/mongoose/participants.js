@@ -7,8 +7,6 @@ const { BadRequestError, UnauthorizedError } = require("../../errors");
 const { createJWT, createTokenParticipant } = require("../../utils");
 const { otpMail, orderMail } = require("../mail");
 
-const moment = require("moment");
-
 const getAllEvents = async (req) => {
   const result = await Events.find({ statusEvent: "Published" })
     .populate("category")
@@ -37,20 +35,22 @@ const signinParticipant = async (req) => {
     throw new BadRequestError("Please provide email and password");
   }
 
-  const result = await Participant.findOne({ email: email });
+  const result = await Participant.findOne({ email: email.toLowerCase() });
 
   if (!result) {
     throw new UnauthorizedError("Invalid Credentials");
   }
 
-  if (result.status === "tidak aktif") {
-    throw new UnauthorizedError("Akun anda belum aktif");
+  const isCorrectPassword = await result.comparePassword(password);
+
+  if (!isCorrectPassword) {
+    throw new UnauthorizedError("Invalid Credentials");
   }
 
-  const isPasswordCorrect = await result.comparePassword(password);
-
-  if (!isPasswordCorrect) {
-    throw new UnauthorizedError("Invalid Credentials");
+  if (result.status === "tidak aktif") {
+    throw new UnauthorizedError(
+      "Akun anda belum aktif, segera lakukan pendaftaran ulang"
+    );
   }
 
   const token = createJWT({ payload: createTokenParticipant(result) });
@@ -65,7 +65,7 @@ const signupParticipant = async (req) => {
 
   // jika email dan status tidak aktif
   let result = await Participant.findOne({
-    email,
+    email: email.toLowerCase(),
     // status: "tidak aktif",
   });
 
@@ -78,7 +78,7 @@ const signupParticipant = async (req) => {
     result.firstName = firstName;
     result.lastName = lastName;
     result.role = role;
-    result.email = email;
+    result.email = email.toLowerCase();
     result.password = password;
     result.otp = Math.floor(Math.random() * 9999);
     await result.save();
@@ -91,15 +91,13 @@ const signupParticipant = async (req) => {
     result = await Participant.create({
       firstName,
       lastName,
-      email,
+      email: email.toLowerCase(),
       password,
       role,
       otp: Math.floor(Math.random() * 9999),
     });
     await otpMail(email, result);
   }
-
-  
 
   delete result._doc.password;
   delete result._doc.otp;
@@ -111,7 +109,7 @@ const activateParticipant = async (req) => {
   const { otp, email } = req.body;
 
   const check = await Participant.findOne({
-    email,
+    email: email.toLowerCase(),
   });
 
   if (!check) throw new NotFoundError("Partisipan belum terdaftar");
@@ -207,7 +205,7 @@ const checkoutOrder = async (req) => {
     personalDetail: {
       firstName,
       lastName,
-      email,
+      email: email.toLowerCase(),
     },
     totalPay,
     totalOrderTicket: totalOrderTicket || 1,
@@ -230,9 +228,98 @@ const checkoutOrder = async (req) => {
 const getAllPaymentByOrganizer = async (req) => {
   const { organizer } = req.params;
 
-  const result = await Payments.find({ organizer: organizer });
+  const result = await Payments.find({ organizer: organizer }).populate(
+    "image"
+  );
 
   return result;
+};
+
+// forgot password
+const forgotPassword = async (req) => {
+  const { email } = req.body;
+
+  if (!email) throw new BadRequestError("Email is required");
+
+  const checkUser = await Participant.findOne({ email: email.toLowerCase() });
+
+  if (!checkUser) {
+    throw new NotFoundError("Participant not found");
+  }
+
+  if (checkUser.status === "aktif") {
+    checkUser.otp = Math.floor(Math.random() * 9999);
+    await checkUser.save();
+
+    await otpMail(email, checkUser);
+
+    // delete checkUser._doc.password
+    // delete checkUser._doc.otp
+  }
+  const res = {
+    email: checkUser.email,
+    id: checkUser._id,
+  };
+
+  return res;
+};
+
+const setNewPassword = async (req) => {
+  const { otp, email, id, password, confirmPassword } = req.body;
+
+  console.log({otp, email, id, password, confirmPassword})
+
+  if (!otp || !email || !password || !confirmPassword)
+    throw new BadRequestError("please provided Input");
+  if (password !== confirmPassword)
+    throw new BadRequestError("invalid password and confirmPassword");
+
+  const check = await Participant.findOne({
+    email: email.toLowerCase(),
+    _id: id,
+  });
+
+  if (!check) throw new NotFoundError("Participant not found");
+  if (check.status !== "aktif")
+    throw new BadRequestError("Participant inactive");
+
+  if (check.otp == otp) {
+    check.password = password;
+    check.otp = Math.floor(Math.random() * 9999);
+    await check.save();
+  } else {
+    check.otp = Math.floor(Math.random() * 9999);
+    await check.save();
+    throw new BadRequestError("invalid Otp credentials");
+  }
+
+  delete check._doc.password;
+  delete check._doc.otp;
+
+  return check;
+};
+
+const checkOtp = async (req) => {
+  const { otp, email, id } = req.body;
+
+  let verified = false;
+
+  if (!email) throw new BadRequestError("email not found");
+  if (!otp) throw new BadRequestError("otp missing");
+
+  const check = await Participant.findOne({
+    _id: id,
+    email: email.toLowerCase(),
+  });
+  if (!check) throw new NotFoundError("Participant not found");
+
+  if (otp === check.otp) {
+    verified = true;
+  } else {
+    throw new BadRequestError("invalid otp");
+  }
+
+  return { otp: otp, statusOtp: verified };
 };
 
 module.exports = {
@@ -244,4 +331,7 @@ module.exports = {
   getAllOrders,
   checkoutOrder,
   getAllPaymentByOrganizer,
+  forgotPassword,
+  setNewPassword,
+  checkOtp,
 };
