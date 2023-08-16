@@ -43,6 +43,8 @@ app.use(v1CMS, payments);
 app.use(v1CMS, authCMS);
 // app.use(v1CMS, authCMS);
 app.use(v1CMS, refreshToken);
+
+// landing page
 app.use(`/api/v1`, participants);
 
 app.use(notFoundMiddleware);
